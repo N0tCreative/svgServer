@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>SVG Image Viewer</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="Allows uploading of images and selections of images">
+    <meta name="keywords" content="SVG, Database">
+    <meta name="author" content="Jerad Arnold 1008362">
+    <!-- Load jquery, bootstrap -->
+    <script src="https://code.jquery.com/jquery-3.3.1.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+    <!-- Custom CSS -->
+    <link rel="stylesheet" type="text/css" href="/style.css">
+    <!-- Custom CSS End -->
+</head>
+<body> 
+    <h3>SVG Image Viewer</h3>
+    
+    <!--
+    <a href="rects.svg">rects.svg</a>
+    <p></p>
+    <img src="rects.svg">
+
+    <hr>
+    <div id="blah">I am blah</div>
+    <hr>
+    <form ref='someform'
+          id='someform'>
+          <div class="form-group">
+                <label for="entryBox">Last Name</label>
+                <input type="text" class="form-control" id="entryBox" value="Value" placeholder="Placeholder">
+            </div>
+        <div class="form-group">
+            <input type='submit' class="btn btn-secondary">
+        </div>
+    </form>
+    -->
+
+    <!-- display downloadable images with number of different shapes -->
+    <table class="scrolltable" id="table">
+        <tr>
+            <th>Image 
+                <br>(click to download)</th>
+            <th>File name
+                <br>(click to download)</th>
+            <th>File size</th>
+            <th>Number of rectangles</th>
+            <th>number of circles</th>
+            <th>Number of paths</th>
+            <th>Number of groups</th>
+        </tr>
+    </table>
+
+    <!-- allows user to upload a file -->
+    <form ref='uploadBttn' id='uploadBttn' method="POST" action="/upload" enctype="multipart/form-data">
+        <input type='file' name='uploadFile' id='file'/>
+        <input type='submit' class="btn btn-secondary" value ='Upload File'>
+    </form> 
+
+    <!-- used for choosing an image to display -->
+    <div display=block>
+        <label display='block'>Choose an image</label>
+        <select name='images' id='viewSelection'  display='block'>
+        </select>
+    </div>
+
+    <!-- used for dsiplaying an image with all its components-->
+    <div display =block>
+        <!-- display image -->
+        <table class='viewimg'>
+            <tr > 
+                <td id='viewimage'>svgImage</td>
+            </tr>
+        </table>
+        <!-- TODO impliment c library functionality-->
+        <!-- display title and description -->
+        <table class= 'titleDesc'>
+            <!-- for some reason it doesnt work with multiple % -->
+            <col width=500>
+            <col width=70%>
+            <tr> 
+                <th>Title</th>
+                <th>Description</th>
+            </tr>
+            <tr>
+                <td id='viewTitle' >no image</td>
+                <td id='viewDesc' >no image</td>
+            </tr>
+        </table>
+        <!-- displays components/elements of the svg -->
+        <table class= 'comp' id='comp'>
+            <!-- for some reason it doesnt work with multiple % -->
+            <col width=200>
+            <col width=65%>
+            <col width=250>
+            <tr>
+                <th>Component</th>
+                <th>Summary</th>
+                <th>Other attributes</th>
+            </tr>
+        </table>
+        <!-- end of TODO-->
+    </div>
+
+    <!-- add spacing between elements -->
+    <table height=50 width=100%></table>
+
+    <!-- displays attributes of selected component -->
+    <div display=block>
+        <!-- select component -->
+        <label>Attributes</label>
+        <select id='compList' onchange=getattr()>
+        </select>
+        <!-- displays attributes of selected component -->
+        <table class= 'attr' id='attributes'>
+            <col width=500>
+            <col width=700>
+            <tr>
+                <th>Type</th>
+                <th>Value</th>
+            </tr>
+        </table>
+    </div>
+    
+    <!-- TODO impliment c functionality-->
+    <!-- change attribute of selected component -->
+    <form ref='attrUpdate' id='attrUpdate'>
+        <label>Attribute Type</label>
+        <input type="text" class="form-control" id="addType" placeholder="Type">
+        <label>Attribute Value</label>
+        <input type="text" class="form-control" id="addValue" placeholder="Value">
+        <input type='submit' class="btn btn-secondary" value="Add Attribute">
+    </form>
+    <!-- end of TODO-->
+
+    <!-- add spacing between elements -->
+    <table height=50 width=100%></table>
+
+    <!-- change title -->
+    <form id='titleUpdate'>
+        <label>New Title</label>
+        <input type="text" class="form-control" id="addTitle" placeholder="title">
+        <input type='submit' class="btn btn-secondary" value="Edit Title">
+    </form>
+
+    <!-- change description -->
+    <form id='descUpdate'>
+        <label>New Description</label>
+        <input type="text" class="form-control" id="addDesc" placeholder="description">
+        <input type='submit' class="btn btn-secondary" value="Edit Description">
+    </form>
+
+    <!-- add spacing between elements -->
+    <table height=50 width=100%></table>
+
+    <!-- add shape -->
+    <select name='images' id='shapeImageSelection'  display='block'></select>
+    <form id='addShape'>
+        <label>Choose shape to add to the image</label>
+        <select name='shapes' id='shapeSelection' display='block'>
+            <option>Rectangle</option>
+            <option>Circle</option>
+        </select>
+        <input type="text" class="form-control" id="shapeAttr" placeholder="standard attributes seperated by a space ex x=3.14 y=2.1">
+        <input type='submit' class="btn btn-secondary" value="Add Shape">
+    </form>
+
+    <!-- scale shape -->
+    <form id='scaleShape'>
+        <label>Choose shapes to scale in the image</label>
+        <select name='shapes' id='shapeScaleSelection' display='block'>
+            <option>Rectangle</option>
+            <option>Circle</option>
+        </select>
+        <input type="text" class="form-control" id="scaleShapeFactor" placeholder="enter a positive number">
+        <input type='submit' class="btn btn-secondary" value="Scale Shape">
+    </form>
+
+    <!-- add spacing between elements -->
+    <table height=50 width=100%></table>
+
+    <!-- create SVG -->
+    <form id='createSvg'>
+        <label>Create Empty SVG Image</label>
+        <input type="text" class="form-control" id="newFileName" placeholder="enter a file name">
+        <input type='submit' class="btn btn-secondary" value="Create SVG">
+    </form>
+
+    <!-- Leave me at the bottom of body -->
+    <script src="/index.js"></script>
+</body>
+</html>
+
+
+
+
+
+
+
